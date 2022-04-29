@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'net.jcip:jcip-annotations:1.0'
     def log4j = '2.7'
     def junit = '5.7.0'
     def assertj = "3.18.1"
