@@ -48,7 +48,7 @@ class BoundedBufferTest {
             long sum = 0;
             var rnd = new Random(0);
             for (int i = 0; i < length; i++) {
-                if (i % 1_000 == 0) {
+                if (i % 1_000_000 == 0) {
                     log.info("Inserting element #{}", i);
                 }
                 int r = rnd.nextInt();
@@ -72,7 +72,7 @@ class BoundedBufferTest {
         public Long call() throws Exception {
             long sum = 0;
             for (int i = 0; i < length; i++) {
-                if (i % 1_000 == 0) {
+                if (i % 1_000_000 == 0) {
                     log.info("Taking element #{}", i);
                 }
                 sum += buf.take();
