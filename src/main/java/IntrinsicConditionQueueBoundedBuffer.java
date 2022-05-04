@@ -4,8 +4,8 @@
  * 2) does not oversleep - e.g. when a thread waits for full buffer to become not full and another thread
  * takes an element, the original thread will wake up really soon after this.
  */
-public class ConditionQueueBoundedBuffer<V> extends BaseBoundedBuffer<V> {
-    public ConditionQueueBoundedBuffer(int capacity) {
+public class IntrinsicConditionQueueBoundedBuffer<V> extends BaseBoundedBuffer<V> {
+    public IntrinsicConditionQueueBoundedBuffer(int capacity) {
         super(capacity);
     }
 
@@ -28,7 +28,10 @@ public class ConditionQueueBoundedBuffer<V> extends BaseBoundedBuffer<V> {
         //our condition queue tracks two events - buffer is full/buffer is empty.
         //after we've put an element, buffer is no longer empty if it was prior to it - let's
         //notify other threads which may be waiting for 'not empty' event.
-        //we must call notify with monitor still held.
+        //We must call notify with monitor still held.
+        //We must call notifyAll instead of notify because we track to events via one condition queue
+        //and if we notify() to a thread that was waiting for 'the other' event, no other thread that
+        //was waiting for 'this' event would get it and so it will be lost.
         notifyAll();
     }
 

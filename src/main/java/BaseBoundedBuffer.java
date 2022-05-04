@@ -6,7 +6,7 @@ import net.jcip.annotations.ThreadSafe;
  * just follows spirit of example from Java Concurrency in practice
  */
 @ThreadSafe
-public abstract class BaseBoundedBuffer<V> {
+public abstract class BaseBoundedBuffer<V> implements BoundedBuffer<V> {
     private final V[] buf;
     private int head;
     private int tail;
@@ -15,16 +15,6 @@ public abstract class BaseBoundedBuffer<V> {
     public BaseBoundedBuffer(int capacity) {
         buf = (V[]) new Object[capacity];
     }
-
-    /**
-     * puts an element to back of buffer or blocks caller while buffer is full.
-     */
-    public abstract void put(V v) throws InterruptedException;
-
-    /**
-     * takes an element from the head of buffer or blocks caller while buffer is empty.
-     */
-    public abstract V take() throws InterruptedException;
 
     /**
      * INVARIANT: buffer must be not full

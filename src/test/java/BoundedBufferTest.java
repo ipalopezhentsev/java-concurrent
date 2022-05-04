@@ -14,13 +14,15 @@ class BoundedBufferTest {
 
     @Test
     public void test() throws ExecutionException, InterruptedException {
-        int elemsToProduce = 1_000_000;
-        //Finished in PT3M12.0636893S:
-//        final BaseBoundedBuffer<Integer> subj = new SleepyBoundedBuffer<>(100, 10);
-        //Finished in PT21.3832531S:
-//        final BaseBoundedBuffer<Integer> subj = new SleepyBoundedBuffer<>(100, 1);
-        //Wow! Finished in PT0.525017S:
-        final BaseBoundedBuffer<Integer> subj = new ConditionQueueBoundedBuffer<>(100);
+        int elemsToProduce = 10_000_000;
+        //Finished in PT3M12.0636893S (1mln):
+//        final BoundedBuffer<Integer> subj = new SleepyBoundedBuffer<>(100, 10);
+        //Finished in PT21.3832531S (1mln):
+//        final BoundedBuffer<Integer> subj = new SleepyBoundedBuffer<>(100, 1);
+        //Wow! Finished in PT0.525017S (10mln in PT4.8157871S):
+        final BoundedBuffer<Integer> subj = new IntrinsicConditionQueueBoundedBuffer<>(100);
+        //Wow! Finished in PT0.2433151S (10mln in PT1.5890292S):
+//        final BoundedBuffer<Integer> subj = new SeparateConditionQueuesBoundedBuffer<>(100);
         final var exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         var start = Instant.now();
         final Future<Long> futSumFromProducer = exec.submit(new Producer(elemsToProduce, subj));
@@ -36,9 +38,9 @@ class BoundedBufferTest {
 
     static class Producer implements Callable<Long> {
         private final int length;
-        private final BaseBoundedBuffer<Integer> buf;
+        private final BoundedBuffer<Integer> buf;
 
-        Producer(int length, BaseBoundedBuffer<Integer> buf) {
+        Producer(int length, BoundedBuffer<Integer> buf) {
             this.length = length;
             this.buf = buf;
         }
@@ -60,10 +62,10 @@ class BoundedBufferTest {
     }
 
     static class Consumer implements Callable<Long> {
-        private final BaseBoundedBuffer<Integer> buf;
+        private final BoundedBuffer<Integer> buf;
         private final long length;
 
-        Consumer(long length, BaseBoundedBuffer<Integer> buf) {
+        Consumer(long length, BoundedBuffer<Integer> buf) {
             this.buf = buf;
             this.length = length;
         }
